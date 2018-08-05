@@ -40,6 +40,10 @@ var World = function (ctx, canv, min, max, dT) {
     canv.onmouseup = e => {
         this.objects.map(o => {if(o.mouseup) o.mouseup(this.normalizeMousePosition(e))})
     };
+
+    canv.ontouchstart = e =>canv.onmousedown(e)
+    canv.ontouchmove = e =>canv.onmousemove(e)
+    canv.ontouchend = e =>canv.onmouseup(e)
 }
 
 var Dot = function (pos, weight) {
