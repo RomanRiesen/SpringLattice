@@ -17,7 +17,7 @@ canvas {background-color: black;}
     var ctx = canv.getContext("2d");
 
     ctx.strokeStyle = "white";
-    var gridSize = 30;
+    var gridSize = 50;
     var world = new World(ctx, canv);
     world.dT = 0.3;
 
@@ -31,30 +31,30 @@ canvas {background-color: black;}
     dots = [];
     springs = [];
     randomizeLastSpringLength = (max, min = 0) => {
-                springs[springs.length - 1].distance += Math.random()*max-Math.random()*min
+        springs[springs.length - 1].distance += Math.random()*max-Math.random()*min
     }
     for (var j = 0; j < gridSize; j++) {
         dots.push([]);
         for (var k = 0; k < gridSize; k++){
-            dots[j].push(world.addObject( new Dot( new Vector( (j+1)*15,(k+1)*15) ) ) );
+            dots[j].push(world.addObject( new Dot( new Vector( (j+1)*15*30/gridSize,(k+1)*15*30/gridSize) ) ) );
             if(k > 0) {
                 springs.push( new Spring(
                     dots[j][k],
                     dots[j][k-1]
                 ) )
-                randomizeLastSpringLength(0);
+                //randomizeLastSpringLength(0);
             }
             if(j > 0) {
                 springs.push( new Spring(
                     dots[j-1][k],
                     dots[j][k]
                 ) )
-                randomizeLastSpringLength(0);
+                //randomizeLastSpringLength(0);
             }
         }
     }
 
-    //for(var i=0; i < gridSize; i++){dots[i][0].fixed = true; console.log(dots[0][i].fixed)}
+    for(var i=0; i < gridSize; i++){dots[i][0].fixed = true; console.log(dots[0][i].fixed)}
 
     springs.map( o => world.addObject(o) );
     dots.map( o => o.map( o => world.addObject(o) ) );
