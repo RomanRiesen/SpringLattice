@@ -5,8 +5,10 @@ var World = function (ctx, canv, min, max, dT) {
     this.max = max || new Vector(0,0);
     this.dT = dT || 1;
     this.t = 0;
-    this.drag = 0.01;//around 0.001 is reasonable, higher when interactive
+    this.drag = 0.001;//around 0.001 is reasonable, higher when interactive
     this.objects = [];//list of all objects, updated in world.update
+    this.forceField = ()=>{return new Vector(0,0);}//function(pos){return new Vector(0,0.1);};
+    this.mouseForceFactor = 0.1;
 
     this.update = () => {
         ctx.clearRect(0,0,this.canv.width,this.canv.height)
@@ -24,8 +26,10 @@ var World = function (ctx, canv, min, max, dT) {
     this.normalizeMousePosition = e => {
         var rect = this.canv.getBoundingClientRect();
         canvMousePos = new Vector();
-        canvMousePos.x = e.clientX - rect.left;
-        canvMousePos.y = e.clientY - rect.top;
+        X = e.touches ? e.touches[0].clientX : e.clientX
+        Y = e.touches ? e.touches[0].clientY : e.clientY
+        canvMousePos.x = X - rect.left;
+        canvMousePos.y = Y - rect.top;
         return canvMousePos;
     }
 
@@ -47,10 +51,11 @@ var World = function (ctx, canv, min, max, dT) {
 
 }
 
-var Dot = function (pos, weight) {
+var Dot = function (pos, weight, fixed) {
     this.pos = pos || new Vector(0,0);
     this.vel = new Vector(0,0);
     this.force = new Vector(0,0);
+    this.fixed = fixed || false;
 
     if(weight == 0) {console.warn("Weight == 0 results in divisions by zero!");}
     this.weight = weight || 1;
@@ -59,16 +64,19 @@ var Dot = function (pos, weight) {
 
 
     this.update = world => {
-        this.vel.addTo(this.force.multiply(world.dT*1/this.weight))
-        this.vel.multiplyBy(1-world.drag);//Todo should k*|v|^2.
-        this.pos.addTo(this.vel.multiply(world.dT));
+        if(!this.fixed) {
+            this.force.addTo(world.forceField(this.pos))
+            this.vel.addTo(this.force.multiply(world.dT*1/this.weight))
+            this.vel.multiplyBy(1-world.drag);//Todo should k*v^2.
+            this.pos.addTo(this.vel.multiply(world.dT));
+        }
         this.force = new Vector(0, 0);
     }
 
     this.draw = world => {
-        ctx.beginPath();
-        ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2*Math.PI);
-        ctx.stroke();
+        //ctx.beginPath();
+        //ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2*Math.PI);
+        //ctx.stroke();
     }
 
     this.mousedown = V => {
@@ -80,7 +88,7 @@ var Dot = function (pos, weight) {
     this.mousemove = V => {
         //if(this.selected) this.pos = V;
         if( this.selected ) {
-            this.force.addTo(V.subtract(this.pos))
+            this.force.addTo(V.subtract(this.pos).multiply(world.mouseForceFactor));
         }
     }
 
@@ -113,5 +121,3 @@ var Spring = function (p1, p2, length) {
         ctx.stroke();
     };
 }
-
-
