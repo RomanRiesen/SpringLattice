@@ -41,9 +41,11 @@ var World = function (ctx, canv, min, max, dT) {
         this.objects.map(o => {if(o.mouseup) o.mouseup(this.normalizeMousePosition(e))})
     };
 
-    canv.ontouchstart = e => {e.preventDefault(); canv.onmousedown(e);};
-    canv.ontouchmove = e => {e.preventDefault(); canv.onmousemove(e);};
-    canv.ontouchend = e => {e.preventDefault(); canv.onmouseup(e);};
+    canv.ontouchstart = e => {e.preventDefault(); canv.onmousedown(e);}
+    canv.ontouchmove = e => {e.preventDefault(); canv.onmousemove(e);}
+    canv.ontouchend = e => {e.preventDefault(); canv.onmouseup(e);}
+
+}
 
 var Dot = function (pos, weight) {
     this.pos = pos || new Vector(0,0);
