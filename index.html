@@ -2,9 +2,13 @@
 <head>
 <script src="vector.js"></script>
 <script src="objects.js"></script>
+<style>
+body, html {margin: 0;}
+canvas {background-color: black;}
+</style>
 </head>
 <body>
-    <canvas id = "canv", width="500px", height="500px">
+    <canvas id = "canv", width="1000px", height="1000px">
     </canvas>
 </body>
 
@@ -12,6 +16,7 @@
     var canv = document.getElementById("canv");
     var ctx = canv.getContext("2d");
 
+    ctx.strokeStyle = "white";
     var world = new World(ctx, canv);
     world.dT = 0.2;
 
