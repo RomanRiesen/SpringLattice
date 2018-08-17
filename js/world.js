@@ -6,7 +6,7 @@ var World = function (ctx, canv, min, max, dT) {
     this.max = max || new Vector(100,100);
     this.dT = dT || 1;
     this.t = 0;
-    this.drag = 0.001;//around 0.001 is reasonable, higher when interactive
+    this.drag = 0.002;//around 0.001 is reasonable, higher when interactive
     this.objects = [];//list of all objects, updated in world.update
     this.forceField = ()=>{return new Vector(0,0);}//function(pos){return new Vector(Math.random()/10-Math.random()/20,0.05);};//
     this.mouseForceFactor = 0.8;
