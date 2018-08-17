@@ -1,10 +1,12 @@
 <html>
 <head>
-<script src="vector.js"></script>
-<script src="objects.js"></script>
+<script src="js/vector.js"></script>
+<script src="js/world.js"></script>
+<script src="js/dot.js"></script>
+<script src="js/spring.js"></script>
 <style>
-body, html {margin: 0;}
-canvas {background-color: black;}
+body, html {margin: 0; width: 100%;background-color: #222222;}
+canvas {background-color: #111111;}
 </style>
 </head>
 <body>
@@ -17,26 +19,24 @@ canvas {background-color: black;}
     var ctx = canv.getContext("2d");
 
     ctx.strokeStyle = "white";
-    var gridSize = 50;
+    var gridSize = 75;
     var world = new World(ctx, canv);
-    world.dT = 0.3;
-
-    //var p1 = world.addObject( new Dot(new Vector(50,50), 1) );
-    //var p2 = world.addObject( new Dot(new Vector(100,50), 1) );
-    //var p3 = world.addObject( new Dot(new Vector(100,100), 1) );
-    //world.addObject( new Spring(p1, p2, 80) );
-    //world.addObject( new Spring(p1, p3 ) );
-    //world.addObject( new Spring(p2, p3 ) );
+    world.dT = 0.3;//FIXME faster than 0.4 leads to problems to be debugged (wrong use of world.dT in objects.js)
 
     dots = [];
     springs = [];
+
     randomizeLastSpringLength = (max, min = 0) => {
+        //helper function for interesting starts.
         springs[springs.length - 1].distance += Math.random()*max-Math.random()*min
     }
+
+    //create a grid of dots and springs
+    const topLeft = new Vector(45, 45)
     for (var j = 0; j < gridSize; j++) {
         dots.push([]);
         for (var k = 0; k < gridSize; k++){
-            dots[j].push(world.addObject( new Dot( new Vector( (j+1)*15*30/gridSize,(k+1)*15*30/gridSize) ) ) );
+            dots[j].push(world.addObject( new Dot( new Vector( (j+topLeft.x)*15*30/gridSize,(k+topLeft.y)*15*30/gridSize) ) ) );
             if(k > 0) {
                 springs.push( new Spring(
                     dots[j][k],
@@ -54,13 +54,13 @@ canvas {background-color: black;}
         }
     }
 
-    for(var i=0; i < gridSize; i++){dots[i][0].fixed = true; console.log(dots[0][i].fixed)}
+    //for (var i=0; i < gridSize; i++) dots[i][0].fixed = true
 
     springs.map( o => world.addObject(o) );
     dots.map( o => o.map( o => world.addObject(o) ) );
 
 function loop () {
-        //todo set world.dT according to time passed since last frame (as I have no guarantee how often requestAnimationFrame is allowed to execute at a time).
+        //TODO set world.dT according to time passed since last frame (as I have no guarantee how often requestAnimationFrame is allowed to execute at a time).
         world.update();
         window.requestAnimationFrame(loop);
     }
