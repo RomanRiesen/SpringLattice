@@ -54,8 +54,13 @@ canvas {background-color: #111111;}
         }
     }
 
-    //Fix the top row for a curtain-like effect.
-    //for (var i=0; i < gridSize; i++) dots[i][0].fixed = true
+    function curtainInWind(){
+        //create a windy force field
+        world.forceField = function(pos){return new Vector(Math.random()/10-Math.random()/20,0.05);};
+        //Fix the top row for a curtain-like effect.
+        for (var i=0; i < gridSize; i++) dots[i][0].fixed = true
+    }
+
 
     springs.map( o => world.addObject(o) );
     dots.map( o => o.map( o => world.addObject(o) ) );
